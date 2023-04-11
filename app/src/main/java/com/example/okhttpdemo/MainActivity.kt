@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.okhttpdemo.data.ClothHelper
 import com.example.okhttpdemo.data.Clothes
 import com.example.okhttpdemo.data.NationalResponse
+import com.example.okhttpdemo.databinding.ActivityMainBinding
 import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
@@ -18,28 +19,24 @@ class MainActivity : AppCompatActivity() {
     private val PREFS_NAME = "MyPrefsFile"
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var client: OkHttpClient
-    private lateinit var textView: TextView
-    private lateinit var imageView:ImageView
+    private lateinit var binding : ActivityMainBinding
     private val getURL =
         "https://api.tomorrow.io/v4/timelines?location=28.0865950,30.7526881&fields=temperature&timesteps=current&units=metric&apikey=1lV97HRdMU867j2DkTLVns9tvNU6JUgd"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         client = OkHttpClient()
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        imageView=findViewById(R.id.image)
-        textView = findViewById(R.id.textData)
         getDataFromApi()
-
 
 
         val savedData = sharedPreferences.getInt("id", 0)
         if (savedData != 0) {
             val cloth = ClothHelper.clothesList.first { it.id == savedData }
-            imageView.setImageResource(cloth.imageId)
-
+            binding.image.setImageResource(cloth.imageId)
         }
 
     }
@@ -60,8 +57,8 @@ class MainActivity : AppCompatActivity() {
 
                     result.data.timelines[0].intervals[0].values.temperature
                     runOnUiThread {
-                        textView.text =
-                            result.data.timelines[0].intervals[0].values.temperature.toString()+"°C"
+                        binding.textData.text =
+                            result.data.timelines[0].intervals[0].values.temperature.toString()
                         val hotOrCold =
                             check(result.data.timelines[0].intervals[0].values.temperature)
                         val resultOfSelectingOneCloth =
