@@ -34,11 +34,14 @@ class MainActivity : AppCompatActivity() {
         val savedData = sharedPreferences.getInt("id", 0)
         val savedDate = sharedPreferences.getString("date","")
         val newDate=getDate()
-        if(isSameDate(savedDate,newDate)){
-        if (savedData != 0) {
-            val cloth = ClothHelper.clothesList.first { it.id == savedData }
+        if (isSameDate(savedDate, newDate)) {
+            if (savedData != 0) {
+                val cloth = ClothHelper.clothesList.first { it.id == savedData }
+                binding.image.setImageResource(cloth.imageId)
+            }
+        } else {
+            val cloth = ClothHelper.clothesList.filter { it.id != savedData }.random()
             binding.image.setImageResource(cloth.imageId)
-        }
         }
 
     }
