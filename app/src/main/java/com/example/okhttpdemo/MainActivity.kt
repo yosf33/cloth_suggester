@@ -46,6 +46,26 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun updateData(hotOrCold: String) {
+        val savedData = sharedPreferences.getInt("id", 0)
+        val savedDate = sharedPreferences.getString("date", "")
+        val newDate = getDate()
+        if (isSameDate(savedDate, newDate) && savedData != 0) {
+            val cloth = getListOfClothUsedOnSummerOrWinter(
+                ClothHelper.clothesList,
+                hotOrCold
+            ).find { it.id == savedData }
+            binding.image.setImageResource(cloth!!.imageId)
+        } else {
+            val cloth = ClothHelper.clothesList.filter { it.id != savedData }.random()
+            binding.image.setImageResource(cloth.imageId)
+            val editor = sharedPreferences.edit()//like open file i use .edit
+            editor.putInt("id", cloth.id)
+            editor.apply()//close file
+
+        }
+    }
+
     fun getDataFromApi() {
         val request = Request.Builder()
             .url(getURL)
@@ -71,9 +91,9 @@ class MainActivity : AppCompatActivity() {
                             getListOfClothUsedOnSummerOrWinter(ClothHelper.clothesList, hotOrCold).random().id
 
                         val editor = sharedPreferences.edit()//like open file i use .edit
-                        editor.putInt("id", idOfSelectingOneCloth)
                         editor.putString("date", getDate())
                         editor.apply()//close file
+                        updateData(hotOrCold)
 
                     }
                 }
