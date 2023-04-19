@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private val PREFS_NAME = "MyPrefsFile"
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var client: OkHttpClient
-    private lateinit var binding : ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     private val getURL =
         "https://api.tomorrow.io/v4/timelines?location=28.0865950,30.7526881&fields=temperature&timesteps=current&units=metric&apikey=1lV97HRdMU867j2DkTLVns9tvNU6JUgd"
 
@@ -30,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         getDataFromApi()
 
-
         val savedData = sharedPreferences.getInt("id", 0)
         if (savedData != 0) {
             val cloth = ClothHelper.clothesList.first { it.id == savedData }
@@ -40,7 +39,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun getDataFromApi() {
-        val request = Request.Builder().url(getURL).build()
+        val request = Request.Builder()
+            .url(getURL)
+            .build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
@@ -53,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 response.body?.string()?.let { jsonString ->
                     val result = Gson().fromJson(jsonString, NationalResponse::class.java)
 
-                    result.data.timelines[0].intervals[0].values.temperature
+                    
                     runOnUiThread {
                         binding.textData.text =
                             result.data.timelines[0].intervals[0].values.temperature.toString()
